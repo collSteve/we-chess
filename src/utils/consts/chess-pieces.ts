@@ -1,0 +1,2 @@
+export const Regular_Chess_Piece: string[] = ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr', 'wp', 
+                                              'bp', 'br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br'];

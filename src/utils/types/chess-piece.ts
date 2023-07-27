@@ -1,0 +1,1 @@
+export type RegularChessPieceType = 'wr' | 'wn' | 'wb' | 'wq' | 'wk' | 'wb' | 'wn' | 'wr' | 'wp' | 'bp' | 'br' | 'bn' | 'bb' | 'bq' | 'bk' | 'bb' | 'bn' | 'br';

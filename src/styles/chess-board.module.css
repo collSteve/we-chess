@@ -1,0 +1,84 @@
+.piece {
+    background-size: 100%;
+    cursor: pointer;
+    cursor: grab;
+    cursor: -webkit-grab;
+    height: 12.5%;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    touch-action: none;
+    width: 12.5%;
+    will-change: transform;
+}
+
+.piece.br, .promotion-piece.br {
+    background-image: url(https://www.chess.com/chess-themes/pieces/neo/150/br.png);
+}
+
+ .piece.bn,  .promotion-piece.bn {
+    background-image: url(https://www.chess.com/chess-themes/pieces/neo/150/bn.png);
+}
+
+ .piece.bb,  .promotion-piece.bb {
+    background-image: url(https://www.chess.com/chess-themes/pieces/neo/150/bb.png);
+}
+
+ .piece.bk,  .promotion-piece.bk {
+    background-image: url(https://www.chess.com/chess-themes/pieces/neo/150/bk.png);
+}
+
+ .piece.bq,  .promotion-piece.bq {
+    background-image: url(https://www.chess.com/chess-themes/pieces/neo/150/bq.png);
+}
+
+ .piece.bp,  .promotion-piece.bp {
+    background-image: url(https://www.chess.com/chess-themes/pieces/neo/150/bp.png);
+}
+
+ .piece.wp,  .promotion-piece.wp {
+    background-image: url(https://www.chess.com/chess-themes/pieces/neo/150/wp.png);
+}
+
+ .piece.wn,  .promotion-piece.wn {
+    background-image: url(https://www.chess.com/chess-themes/pieces/neo/150/wn.png);
+}
+
+ .piece.wb,  .promotion-piece.wb {
+    background-image: url(https://www.chess.com/chess-themes/pieces/neo/150/wb.png);
+}
+
+ .piece.wk,  .promotion-piece.wk {
+    background-image: url(https://www.chess.com/chess-themes/pieces/neo/150/wk.png);
+}
+
+.piece.wq, .promotion-piece.wq {
+    background-image: url(https://www.chess.com/chess-themes/pieces/neo/150/wq.png);
+}
+
+.piece.wr, .promotion-piece.wr {
+    background-image: url(https://www.chess.com/chess-themes/pieces/neo/150/wr.png);
+}
+
+.chess-board {
+    grid-column: board;
+    height: var(--boardHeight);
+    margin-left: calc(var(--boardContainerWidth) - var(--boardWidth));
+    padding-bottom: 0;
+    width: var(--boardWidth);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    border-radius: 3px;
+    contain: layout;
+    height: 100%;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    width: 100%;
+}
+
+#green-board-computer {
+    background-image: url(https://www.chess.com/boards/green/150.png);
+}
