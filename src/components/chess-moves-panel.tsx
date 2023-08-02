@@ -1,23 +1,30 @@
+import { Button, Grid, GridItem, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 
 interface ChessMovePanelProps {
     moves: string[];
     onMoveClick: (moveIndex: number) => void;
+    moveIndex: number;
 }
 
-const ChessMovePanel: React.FC<ChessMovePanelProps> = ({ moves, onMoveClick }) => {
-    const [selectedMoveIndex, setSelectedMoveIndex] = useState<number>(0);
-
-    const handleMoveClick = (moveIndex: number) => {
-        setSelectedMoveIndex(moveIndex);
-        onMoveClick(moveIndex);
-    }
+const ChessMovePanel: React.FC<ChessMovePanelProps> = ({ moves, onMoveClick, moveIndex }) => {
 
     return (
         <div className="chess-moves-panel">
-            {moves.map((move, index) => {
-                return <div key={index} onClick={() => handleMoveClick(index)} style={{color: selectedMoveIndex==index ? 'var(--color-orange-100)': 'black'}}>{move}</div>
-            })}
+            <Grid gap={0} templateColumns='repeat(2, 50%)'>
+                {moves.map((move, index) => {
+                    return <GridItem key={index}>
+                        <Button
+                            key={index}
+                            colorScheme={moveIndex == index ? "teal" : undefined}
+                            onClick={() => onMoveClick(index)}
+                            variant='ghost'
+                        >
+                            {move}
+                        </Button>
+                    </GridItem>
+                })}
+            </Grid>
         </div>
     )
 };

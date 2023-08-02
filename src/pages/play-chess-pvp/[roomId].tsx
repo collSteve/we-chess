@@ -1,9 +1,13 @@
-import { CSSProperties, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import ChessBoard from "~/components/chess-board";
 import Board from "~/components/chess-set/board";
 
 import { Chess, PieceSymbol, Square, Color } from 'chess.js';
 import ChessMovePanel from "~/components/chess-moves-panel";
+// import { getSocket, getSocket2 } from "~/services/websocket";
+import { useRouter } from "next/router";
+import { io, type Socket } from "socket.io-client";
+import { getSocket } from "~/services/websocket";
 
 type ChessJSBoardElement = {
     square: Square;
@@ -38,16 +42,83 @@ function chessJSBoard2Squares(board: ChessJSBoardElement[][]) {
     return squares;
 }
 
+
+
+interface PvPProps {
+    roomId: string;
+}
+
+
 const chess = new Chess(); // Initialize a new chess game
 
+let socket: Socket;
+export default function PlayChessPvPPage() {
+    // const socket = getSocket2();
 
-export default function PlayChessPage() {
+    const router = useRouter();
+
+    const roomId = router.query.roomId;
+
     const [squares, setSquares] = useState(chessJSBoard2Squares(chess.board())); // Get the initial board state
     const [selectedSquare, setSelectedSquare] = useState<[number, number] | null>(null); // Store the selected square coordinates
 
     const [moves, setMoves] = useState<string[]>(chess.history()); // Store the moves made so far
 
     const [displayMoveIndex, setDisplayMoveIndex] = useState<number>(0);
+
+
+    // players info
+    const [playerName1, setPlayerName1] = useState<string>(''); // current player name
+    const [playerName2, setPlayerName2] = useState<string>(''); // opponent player name
+
+
+    const socketSetup = (socekt: Socket) => {
+        socket.on('gameStarted', (initialBoard: Chess) => {
+            chess.load(initialBoard.fen());
+        });
+
+        socket.on('playerJoined', (playerInfo: string) => {
+            setPlayerName2(playerInfo);
+        });
+
+        socket.on('moveMade', (updatedBoardPGN: string) => {
+            // TODO: check if game won
+            chess.loadPgn(updatedBoardPGN);
+            setSquares(chessJSBoard2Squares(chess.board()));
+
+            setMoves(chess.history());
+            setDisplayMoveIndex(chess.history().length - 1);
+        });
+
+        socket.on('makeMoveError', (error: string) => {
+            console.log(error);
+        });
+
+        socket.on('joinError', error=>{
+            console.log(`Join error: ${error}`);
+        });
+
+        socket.on('playerJoined', (playerInfo: string) => {
+            console.log(`Player joined: ${playerInfo}`);
+        });
+    }
+
+    useEffect(() => {
+
+        // fetch('/api/socket').finally(() => {
+        //     socket = io({ path: '/api/socket_io' });
+
+        //     socketSetup(socket);
+        // });
+
+
+        getSocket().then((fetchedSocket) => {
+            socket = fetchedSocket;
+            socketSetup(socket);
+        });
+
+    }, []);
+
 
     const handleSquareClick = (row: number, col: number) => {
         console.log(selectedSquare);
@@ -61,15 +132,21 @@ export default function PlayChessPage() {
 
             try {
                 const move = chess.move({ from, to });
-                console.log(chess.board());
+
                 if (move) {
-                    // If the move is valid, update the chessboard and clear the selection
-                    setSquares(chessJSBoard2Squares(chess.board()));
                     setSelectedSquare(null);
 
-                    // set moves history
-                    setMoves(chess.history());
-                    setDisplayMoveIndex(chess.history().length - 1);
+                    // If move is valid, send to socket
+                    socket.emit('makeMove', roomId, { from, to });
+                    console.log('make move sent');
+
+                    // If the move is valid, update the chessboard and clear the selection
+                    // setSquares(chessJSBoard2Squares(chess.board()));
+
+
+                    // // set moves history
+                    // setMoves(chess.history());
+                    // setDisplayMoveIndex(chess.history().length - 1);
 
                 } else {
                     // If the move is invalid, clear the selection
@@ -90,21 +167,21 @@ export default function PlayChessPage() {
 
 
     return (
-        <div style={{display: "flex", flexDirection: "row"}}>
+        <div style={{ display: "flex", flexDirection: "row" }}>
             <Board squares={squares} onSquareClick={handleSquareClick} />
-            <ChessMovePanel 
-                moves={moves} 
-                moveIndex={displayMoveIndex} 
-                onMoveClick={(index)=>{
+            <ChessMovePanel
+                moves={moves}
+                moveIndex={displayMoveIndex}
+                onMoveClick={(index) => {
                     setDisplayMoveIndex(index);
-                    const moveIndexHistory = chess.history({verbose: true})[index];
+                    const moveIndexHistory = chess.history({ verbose: true })[index];
                     const fenAfterMove = moveIndexHistory?.after;
 
                     // TODO: make a fen to squares util so I don't need to create a new CHess object everytime 
                     const board = (new Chess(fenAfterMove)).board();
 
                     setSquares(chessJSBoard2Squares(board));
-                }}/>
+                }} />
             <h1>{displayMoveIndex}</h1>
         </div>
         // <ChessBoard style={{width: '500px', height: '500px'}} ></ChessBoard>

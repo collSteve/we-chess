@@ -4,8 +4,18 @@ import Link from "next/link";
 import { api } from "~/utils/api";
 import PlayChess from "./play-chess";
 
+import {io} from 'socket.io-client'
+import { useEffect } from "react";
+
+// import { getSocket } from "~/services/websocket";
+
+// const socket = getSocket();
+
+
 export default function Home() {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
+
+  const socketi = api.socket.hello.useQuery({ text: "from tRPC" });
 
   return (
     <>
