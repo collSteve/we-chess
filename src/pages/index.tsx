@@ -6,6 +6,7 @@ import PlayChess from "./play-chess";
 
 import {io} from 'socket.io-client'
 import { useEffect } from "react";
+import CreateJoinGamePage from "./create-join-game";
 
 // import { getSocket } from "~/services/websocket";
 
@@ -19,7 +20,8 @@ export default function Home() {
 
   return (
     <>
-      <PlayChess></PlayChess>
+      {/* <PlayChess></PlayChess> */}
+      <CreateJoinGamePage></CreateJoinGamePage>
     </>
   );
 }

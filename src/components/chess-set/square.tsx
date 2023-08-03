@@ -2,10 +2,17 @@ import Piece from "./piece";
 
 interface SquareProps {
     piece: string;
-    color: 'light' | 'dark';
+    color: 'light' | 'dark' | 'highlight' | 'emphasis';
     onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
     xPos: number;
     yPos: number;
+}
+
+const squareColor = {
+    light: '#f0d9b5',
+    dark: '#b58863',
+    highlight: 'yellow',
+    'emphasis': 'red'
 }
 
 export const Square: React.FC<SquareProps> = ({ piece, color, onClick, xPos, yPos }) => {
@@ -18,7 +25,7 @@ export const Square: React.FC<SquareProps> = ({ piece, color, onClick, xPos, yPo
         // overflow: 'hidden',
         // position: 'absolute',
         touchAction: 'none',
-        backgroundColor: color === 'light' ? '#f0d9b5' : '#b58863',
+        backgroundColor: squareColor[color],
     };
     return (
         <div onClick={onClick} className={`chess-square ${color}`} style={squareStyle}>

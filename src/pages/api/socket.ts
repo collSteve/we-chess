@@ -48,9 +48,9 @@ const SocketHandler = async (req: any, res: any) => {
 
   // res.socket.server.io = io;
 
-  
 
-  io.on('connection', (socket)=> onConnection(socket, io));
+
+  io.on('connection', (socket) => onConnection(socket, io));
 
 
   res.socket.server.io = io;
@@ -62,6 +62,25 @@ export const config = {
     bodyParser: false
   }
 }
+
+const startGame = (socket: Socket, io: Server, roomId: string) => {
+  const room = rooms[roomId];
+
+
+  if (room && room.players.length === 2) {
+    // TODO: initialize chess board
+    room.chessBoard = new Chess();
+
+    // TODO: smart way to assign piece type to player
+    socket.emit('pieceAssigned', roomId, 'b'); // later joined player is black
+    socket.to(roomId).emit('pieceAssigned', roomId, 'w'); // first joined player is white
+
+
+    io.in(roomId).emit('gameStarted', room.chessBoard.pgn());
+  } else {
+    socket.emit('startGameError', 'Cannot start game, room is not ready.');
+  }
+};
 
 const onConnection = (socket: Socket, io: Server) => {
   console.log('connection established');
@@ -86,6 +105,8 @@ const onConnection = (socket: Socket, io: Server) => {
       room.players.push(playerInfo);
       socket.emit('roomJoined', roomId, room.players[0]); // pass roomId and opponnent's playerInfo to sender
       socket.to(roomId).emit('playerJoined', playerInfo); // pass playerInfo to opponent
+    
+      startGame(socket, io, roomId);
     } else {
       socket.emit('joinError', 'Room is full or does not exist.');
     }
@@ -123,11 +144,9 @@ const onConnection = (socket: Socket, io: Server) => {
         if (chessMove) {
           // If the move is valid, send the updated chess board to both players
           // console.log(room.chessBoard.pgn());
-          io.to(roomId).emit('moveMade', room.chessBoard.pgn());
+          io.to(roomId).emit('moveMade', room.chessBoard.pgn(), chessMove);
 
           // TODO: Check if the game is over
-
-          console.log('server move made sent')
 
         } else {
           // If the move is invalid, send error message back to player
