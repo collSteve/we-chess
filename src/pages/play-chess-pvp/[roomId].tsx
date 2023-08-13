@@ -10,6 +10,7 @@ import { io, type Socket } from "socket.io-client";
 import { getSocket } from "~/services/websocket";
 import { chess2Square } from "~/utils/square-conversion";
 import { ToastId, useToast } from '@chakra-ui/react'
+import PlayerInfoInGameBanner from "~/components/player-info-in-game-banner";
 
 type ChessJSBoardElement = {
     square: Square;
@@ -240,7 +241,11 @@ export default function PlayChessPvPPage() {
 
     return (
         <div style={{ display: "flex", flexDirection: "row" }}>
-            <Board playerPiece={playerPiece??undefined} squares={squares} onSquareClick={handleSquareClick} selectedSquare={selectedSquare} specialSquares={resolveSpecialSquare()} />
+            <div>
+                <PlayerInfoInGameBanner playerName={playerName2}/>
+                <Board playerPiece={playerPiece??undefined} squares={squares} onSquareClick={handleSquareClick} selectedSquare={selectedSquare} specialSquares={resolveSpecialSquare()} />
+                <PlayerInfoInGameBanner playerName={playerName1}/>
+            </div>
             <ChessMovePanel
                 moves={moves}
                 moveIndex={displayMoveIndex}
